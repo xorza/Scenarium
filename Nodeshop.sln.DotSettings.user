@@ -4,4 +4,5 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dff7dda2_002Df3fa_002D4790_002Dbc2a_002D4225d9ca3ab7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;csso.Graph.Tests&amp;gt; #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/Users/xxorza/Projects/Nodeshop/csso.Graph.Tests" Presentation="&amp;lt;csso.Graph.Tests&amp;gt;" /&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>
