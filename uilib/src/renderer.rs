@@ -1,11 +1,32 @@
-use std::{borrow::Cow, f32::consts, mem};
+use std::borrow::Cow;
+use std::f32::consts;
+use std::mem;
 
 use bytemuck::{Pod, Zeroable};
 use glam::UVec2;
+use wgpu::{Adapter, Device, Queue, SurfaceConfiguration};
 use wgpu::util::DeviceExt;
 
-use crate::app_base::{App, InitInfo, RenderInfo};
-use crate::event::{Event, EventResult};
+use crate::app_base::InitInfo;
+
+pub trait Renderer {
+    fn background(&self);
+}
+
+pub(crate) struct WgpuRenderer {
+    vertex_buf: wgpu::Buffer,
+    index_buf: wgpu::Buffer,
+    index_count: u32,
+    bind_group: wgpu::BindGroup,
+    uniform_buf: wgpu::Buffer,
+    pipeline: wgpu::RenderPipeline,
+    window_size: UVec2,
+}
+
+impl Renderer for WgpuRenderer {
+    fn background(&self) {}
+}
+
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
@@ -91,43 +112,28 @@ fn create_matrix(aspect_ratio: f32, angle: f32) -> glam::Mat4 {
         glam::Vec3::ZERO,
         glam::Vec3::Z,
     );
+
     projection * view
 }
 
 
-pub struct SampleApp {
-    vertex_buf: wgpu::Buffer,
-    index_buf: wgpu::Buffer,
-    index_count: u32,
-    bind_group: wgpu::BindGroup,
-    uniform_buf: wgpu::Buffer,
-    pipeline: wgpu::RenderPipeline,
-    window_size: UVec2,
-}
-
-impl App for SampleApp {
-    fn init(
-        InitInfo {
-            surface_config,
-            adapter: _adapter,
-            device,
-            queue,
-        }: InitInfo) -> Self {
+impl WgpuRenderer {
+    pub fn new(init: InitInfo) -> Self {
         let vertex_size = mem::size_of::<Vertex>();
         let (vertex_data, index_data) = create_vertices();
 
-        let vertex_buf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        let vertex_buf = init.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Cube Vertex Buffer"),
             contents: bytemuck::cast_slice(&vertex_data),
             usage: wgpu::BufferUsages::VERTEX,
         });
-        let index_buf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        let index_buf = init.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Cube Index Buffer"),
             contents: bytemuck::cast_slice(&index_data),
             usage: wgpu::BufferUsages::INDEX,
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        let bind_group_layout = init.device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: None,
             entries: &[
                 wgpu::BindGroupLayoutEntry {
@@ -152,7 +158,7 @@ impl App for SampleApp {
                 },
             ],
         });
-        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        let pipeline_layout = init.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[&bind_group_layout],
             push_constant_ranges: &[],
@@ -165,7 +171,7 @@ impl App for SampleApp {
             height: size,
             depth_or_array_layers: 1,
         };
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
+        let texture = init.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("Mandelbrot Set Texture"),
             size: texture_extent,
             mip_level_count: 1,
@@ -176,7 +182,7 @@ impl App for SampleApp {
             view_formats: &[],
         });
         let texture_view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-        queue.write_texture(
+        init.queue.write_texture(
             texture.as_image_copy(),
             &texels,
             wgpu::ImageDataLayout {
@@ -187,14 +193,14 @@ impl App for SampleApp {
             texture_extent,
         );
 
-        let uniform_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        let uniform_buf = init.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Uniform Buffer"),
             size: 64,
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
 
-        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        let bind_group = init.device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
@@ -209,7 +215,7 @@ impl App for SampleApp {
             label: None,
         });
 
-        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        let shader = init.device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("shader.wgsl"))),
         });
@@ -231,7 +237,7 @@ impl App for SampleApp {
             ],
         }];
 
-        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        let pipeline = init.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: None,
             layout: Some(&pipeline_layout),
             vertex: wgpu::VertexState {
@@ -242,7 +248,7 @@ impl App for SampleApp {
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
                 entry_point: "fs_main",
-                targets: &[Some(surface_config.view_formats[0].into())],
+                targets: &[Some(init.surface_config.view_formats[0].into())],
             }),
             primitive: wgpu::PrimitiveState {
                 cull_mode: Some(wgpu::Face::Back),
@@ -253,58 +259,36 @@ impl App for SampleApp {
             multiview: None,
         });
 
-        SampleApp {
+        WgpuRenderer {
             vertex_buf,
             index_buf,
             index_count: index_data.len() as u32,
             bind_group,
             uniform_buf,
             pipeline,
-            window_size: UVec2::new(surface_config.width, surface_config.height),
+            window_size: UVec2::new(init.surface_config.width, init.surface_config.height),
         }
     }
-
-    fn update(&mut self, event: Event) -> EventResult {
-        match event {
-            Event::WindowClose => EventResult::Exit,
-            Event::RedrawFinished => EventResult::Redraw,
-            Event::Resize(size) => {
-                self.window_size = size;
-
-                EventResult::Continue
-            }
-
-            _ => EventResult::Continue
-        }
-    }
-
-    fn render(
-        &self,
-        RenderInfo {
-            device,
-            queue,
-            view,
-            time
-        }: RenderInfo,
-    ) {
+    pub fn render_view(&self, render: crate::app_base::RenderInfo, _view: &dyn crate::view::View) {
         let view_projection = create_matrix(
             self.window_size.x as f32 / self.window_size.y as f32,
-            time as f32,
+            render.time as f32,
         );
-        queue.write_buffer(
+        render.queue.write_buffer(
             &self.uniform_buf,
             0,
             bytemuck::cast_slice(view_projection.as_ref()),
         );
 
         let mut encoder =
-            device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+            render.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
         {
             let mut render_pass = encoder.begin_render_pass(
                 &wgpu::RenderPassDescriptor {
                     label: None,
                     color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                        view,
+                        view: render.view,
                         resolve_target: None,
                         ops: wgpu::Operations {
                             load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
@@ -323,6 +307,6 @@ impl App for SampleApp {
             render_pass.draw_indexed(0..self.index_count, 0, 0..1);
         }
 
-        queue.submit(Some(encoder.finish()));
+        render.queue.submit(Some(encoder.finish()));
     }
 }
