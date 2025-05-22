@@ -3,9 +3,27 @@ using YamlDotNet.Serialization;
 
 namespace CoreInterop;
 
+public struct Vec2f {
+    [YamlMember(Alias = "x")]
+    public float X { get; set; }
+    [YamlMember(Alias = "y")]
+    public float Y { get; set; }
+
+    public Vec2f(float x, float y) {
+        X = x;
+        Y = y;
+    }
+}
+
 public class Graph {
     [YamlMember(Alias = "nodes")]
     public List<Node> Nodes { get; set; } = new();
+    
+    [YamlMember(Alias = "view_pos")]
+    public Vec2f ViewPos { get; set; } = new();
+    
+    [YamlMember(Alias = "view_scale")]
+    public float ViewScale { get; set; } = 1.0f;
 }
 
 public class Node {
@@ -29,6 +47,9 @@ public class Node {
 
     [YamlMember(Alias = "events")]
     public List<NodeEvent> Events { get; set; } = new();
+    
+    [YamlMember(Alias = "view_pos")]
+    public Vec2f ViewPos { get; set; } = new();
 }
 
 public class NodeInput {

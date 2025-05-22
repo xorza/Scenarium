@@ -1,11 +1,11 @@
-use std::mem::ManuallyDrop;
 use crate::FfiBuf;
+use std::mem::ManuallyDrop;
 
 #[repr(C)]
 #[derive(Debug)]
 pub(crate) struct FfiUuid {
-   pub(crate) a: u64,
-   pub(crate) b: u64,
+    pub(crate) a: u64,
+    pub(crate) b: u64,
 }
 
 impl From<uuid::Uuid> for FfiUuid {

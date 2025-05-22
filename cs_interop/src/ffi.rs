@@ -1,7 +1,7 @@
+use bytes::{Buf, BufMut};
 use std::fmt::{Display, Formatter};
 use std::mem::forget;
 use std::str::Utf8Error;
-use bytes::{Buf, BufMut};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -27,7 +27,6 @@ impl FfiBuf {
     pub fn to_uuid(&self) -> uuid::Uuid {
         self.as_str().unwrap().parse().unwrap()
     }
-    
 }
 
 impl Display for FfiBuf {
@@ -63,8 +62,8 @@ impl Drop for FfiBuf {
 }
 
 impl<const N: usize, T> From<[T; N]> for FfiBuf
-    where
-        T: Clone,
+where
+    T: Clone,
 {
     fn from(data: [T; N]) -> Self {
         data.to_vec().into()
@@ -72,8 +71,8 @@ impl<const N: usize, T> From<[T; N]> for FfiBuf
 }
 
 impl<T> From<&[T]> for FfiBuf
-    where
-        T: Clone,
+where
+    T: Clone,
 {
     fn from(data: &[T]) -> Self {
         data.to_vec().into()
@@ -146,8 +145,8 @@ impl<T> From<Vec<T>> for FfiBuf {
 
 impl FromIterator<String> for FfiBuf {
     fn from_iter<I>(iter: I) -> Self
-        where
-            I: IntoIterator<Item=String>,
+    where
+        I: IntoIterator<Item = String>,
     {
         let data: Vec<String> = iter.into_iter().collect();
         let mut bytes = Vec::<u8>::new();
@@ -215,7 +214,6 @@ impl IntoIterator for FfiBuf {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

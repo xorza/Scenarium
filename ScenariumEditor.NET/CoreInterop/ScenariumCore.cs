@@ -17,7 +17,7 @@ public partial class ScenariumCore : IDisposable {
         public CallbackType Type { get; set; }
     }
 
-    public event EventHandler<EventArgs>? CallbackEvent;
+    public event EventHandler<EventArgs> CallbackEvent;
 
 
     private IntPtr _ctx = IntPtr.Zero;
