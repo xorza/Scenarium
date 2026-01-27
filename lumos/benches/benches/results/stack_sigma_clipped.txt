@@ -1,0 +1,15 @@
+sigma_clipped_mean/with_outlier/20
+                        time:   [114.07 ns 114.90 ns 115.77 ns]
+                        thrpt:  [172.76 Melem/s 174.06 Melem/s 175.34 Melem/s]
+Found 2 outliers among 100 measurements (2.00%)
+  2 (2.00%) high mild
+sigma_clipped_mean/with_outlier/50
+                        time:   [306.72 ns 307.51 ns 308.26 ns]
+                        thrpt:  [162.20 Melem/s 162.60 Melem/s 163.02 Melem/s]
+sigma_clipped_mean/with_outlier/100
+                        time:   [488.77 ns 489.75 ns 490.67 ns]
+                        thrpt:  [203.80 Melem/s 204.19 Melem/s 204.60 Melem/s]
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+

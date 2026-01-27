@@ -1,186 +1,323 @@
 background_estimation/512x512/tile_32
-                        time:   [538.98 µs 542.89 µs 547.60 µs]
-                        thrpt:  [478.71 Melem/s 482.87 Melem/s 486.37 Melem/s]
-Found 3 outliers among 20 measurements (15.00%)
-  2 (10.00%) high mild
+                        time:   [541.28 µs 545.86 µs 550.77 µs]
+                        thrpt:  [475.96 Melem/s 480.24 Melem/s 484.31 Melem/s]
+                 change:
+                        time:   [−1.0727% +0.6345% +2.2539%] (p = 0.48 > 0.05)
+                        thrpt:  [−2.2042% −0.6305% +1.0843%]
+                        No change in performance detected.
+Found 2 outliers among 20 measurements (10.00%)
+  1 (5.00%) high mild
   1 (5.00%) high severe
 background_estimation/512x512/tile_64
-                        time:   [601.73 µs 604.23 µs 607.43 µs]
-                        thrpt:  [431.56 Melem/s 433.85 Melem/s 435.65 Melem/s]
-Found 3 outliers among 20 measurements (15.00%)
+                        time:   [601.72 µs 604.95 µs 608.66 µs]
+                        thrpt:  [430.69 Melem/s 433.34 Melem/s 435.66 Melem/s]
+                 change:
+                        time:   [−0.7651% −0.1075% +0.5073%] (p = 0.76 > 0.05)
+                        thrpt:  [−0.5047% +0.1076% +0.7710%]
+                        No change in performance detected.
+Found 4 outliers among 20 measurements (20.00%)
   2 (10.00%) high mild
-  1 (5.00%) high severe
+  2 (10.00%) high severe
 background_estimation/512x512/tile_128
-                        time:   [681.82 µs 688.59 µs 700.26 µs]
-                        thrpt:  [374.35 Melem/s 380.69 Melem/s 384.48 Melem/s]
-Found 3 outliers among 20 measurements (15.00%)
-  3 (15.00%) high severe
+                        time:   [692.30 µs 711.85 µs 730.66 µs]
+                        thrpt:  [358.78 Melem/s 368.26 Melem/s 378.66 Melem/s]
+                 change:
+                        time:   [−0.1144% +2.2993% +4.9466%] (p = 0.10 > 0.05)
+                        thrpt:  [−4.7135% −2.2477% +0.1145%]
+                        No change in performance detected.
+Found 2 outliers among 20 measurements (10.00%)
+  1 (5.00%) high mild
+  1 (5.00%) high severe
 background_estimation/2048x2048/tile_32
-                        time:   [21.174 ms 21.381 ms 21.574 ms]
-                        thrpt:  [194.41 Melem/s 196.17 Melem/s 198.09 Melem/s]
-Found 1 outliers among 20 measurements (5.00%)
+                        time:   [20.083 ms 20.382 ms 20.667 ms]
+                        thrpt:  [202.94 Melem/s 205.79 Melem/s 208.84 Melem/s]
+                 change:
+                        time:   [−8.2529% −5.6889% −3.3076%] (p = 0.00 < 0.05)
+                        thrpt:  [+3.4207% +6.0321% +8.9953%]
+                        Performance has improved.
+Found 3 outliers among 20 measurements (15.00%)
+  1 (5.00%) low severe
+  1 (5.00%) low mild
   1 (5.00%) high mild
 background_estimation/2048x2048/tile_64
-                        time:   [21.480 ms 21.737 ms 21.929 ms]
-                        thrpt:  [191.26 Melem/s 192.96 Melem/s 195.26 Melem/s]
-Found 1 outliers among 20 measurements (5.00%)
-  1 (5.00%) high mild
+                        time:   [20.578 ms 20.811 ms 21.061 ms]
+                        thrpt:  [199.15 Melem/s 201.54 Melem/s 203.83 Melem/s]
+                 change:
+                        time:   [−6.1150% −4.2661% −2.4395%] (p = 0.00 < 0.05)
+                        thrpt:  [+2.5005% +4.4562% +6.5133%]
+                        Performance has improved.
 background_estimation/2048x2048/tile_128
-                        time:   [21.353 ms 21.615 ms 21.889 ms]
-                        thrpt:  [191.62 Melem/s 194.05 Melem/s 196.42 Melem/s]
+                        time:   [20.707 ms 20.897 ms 21.159 ms]
+                        thrpt:  [198.23 Melem/s 200.71 Melem/s 202.56 Melem/s]
+                 change:
+                        time:   [−5.4062% −3.2295% −1.0072%] (p = 0.01 < 0.05)
+                        thrpt:  [+1.0175% +3.3373% +5.7151%]
+                        Performance has improved.
 Found 1 outliers among 20 measurements (5.00%)
   1 (5.00%) high mild
 background_estimation/4096x4096/tile_32
-                        time:   [61.225 ms 61.671 ms 62.110 ms]
-                        thrpt:  [270.12 Melem/s 272.05 Melem/s 274.02 Melem/s]
+                        time:   [61.371 ms 61.753 ms 62.117 ms]
+                        thrpt:  [270.09 Melem/s 271.68 Melem/s 273.37 Melem/s]
+                 change:
+                        time:   [−0.8120% +0.1328% +1.0745%] (p = 0.78 > 0.05)
+                        thrpt:  [−1.0631% −0.1327% +0.8187%]
+                        No change in performance detected.
 background_estimation/4096x4096/tile_64
-                        time:   [64.346 ms 64.808 ms 65.274 ms]
-                        thrpt:  [257.03 Melem/s 258.87 Melem/s 260.73 Melem/s]
+                        time:   [64.043 ms 64.659 ms 65.334 ms]
+                        thrpt:  [256.79 Melem/s 259.47 Melem/s 261.97 Melem/s]
+                 change:
+                        time:   [−1.3921% −0.2303% +1.0621%] (p = 0.72 > 0.05)
+                        thrpt:  [−1.0509% +0.2309% +1.4117%]
+                        No change in performance detected.
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
 background_estimation/4096x4096/tile_128
-                        time:   [66.930 ms 67.495 ms 68.108 ms]
-                        thrpt:  [246.33 Melem/s 248.57 Melem/s 250.67 Melem/s]
+                        time:   [67.120 ms 67.902 ms 68.738 ms]
+                        thrpt:  [244.08 Melem/s 247.08 Melem/s 249.96 Melem/s]
+                 change:
+                        time:   [−0.8305% +0.6034% +2.0403%] (p = 0.44 > 0.05)
+                        thrpt:  [−1.9995% −0.5998% +0.8375%]
+                        No change in performance detected.
 Found 1 outliers among 20 measurements (5.00%)
   1 (5.00%) high mild
 
 background_simd_vs_scalar/sum_and_sum_sq_scalar/1024
-                        time:   [634.89 ns 635.27 ns 635.78 ns]
-                        thrpt:  [1.6106 Gelem/s 1.6119 Gelem/s 1.6129 Gelem/s]
+                        time:   [636.01 ns 636.53 ns 637.21 ns]
+                        thrpt:  [1.6070 Gelem/s 1.6087 Gelem/s 1.6100 Gelem/s]
+                 change:
+                        time:   [+0.1772% +0.3063% +0.4387%] (p = 0.00 < 0.05)
+                        thrpt:  [−0.4368% −0.3054% −0.1769%]
+                        Change within noise threshold.
 Found 5 outliers among 50 measurements (10.00%)
   1 (2.00%) high mild
   4 (8.00%) high severe
 background_simd_vs_scalar/sum_and_sum_sq_simd/1024
-                        time:   [72.765 ns 72.835 ns 72.895 ns]
-                        thrpt:  [14.048 Gelem/s 14.059 Gelem/s 14.073 Gelem/s]
-Found 1 outliers among 50 measurements (2.00%)
-  1 (2.00%) high mild
-background_simd_vs_scalar/sum_abs_dev_scalar/1024
-                        time:   [637.35 ns 637.68 ns 638.06 ns]
-                        thrpt:  [1.6049 Gelem/s 1.6058 Gelem/s 1.6067 Gelem/s]
-Found 6 outliers among 50 measurements (12.00%)
-  3 (6.00%) high mild
-  3 (6.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_simd/1024
-                        time:   [70.593 ns 70.649 ns 70.718 ns]
-                        thrpt:  [14.480 Gelem/s 14.494 Gelem/s 14.506 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
-  2 (4.00%) high mild
-  1 (2.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_scalar/4096
-                        time:   [2.5849 µs 2.5862 µs 2.5876 µs]
-                        thrpt:  [1.5829 Gelem/s 1.5838 Gelem/s 1.5846 Gelem/s]
-Found 5 outliers among 50 measurements (10.00%)
+                        time:   [72.759 ns 72.881 ns 73.018 ns]
+                        thrpt:  [14.024 Gelem/s 14.050 Gelem/s 14.074 Gelem/s]
+                 change:
+                        time:   [+0.0255% +0.1833% +0.3444%] (p = 0.03 < 0.05)
+                        thrpt:  [−0.3432% −0.1829% −0.0255%]
+                        Change within noise threshold.
+Found 4 outliers among 50 measurements (8.00%)
   4 (8.00%) high mild
-  1 (2.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_simd/4096
-                        time:   [316.99 ns 317.16 ns 317.38 ns]
-                        thrpt:  [12.906 Gelem/s 12.915 Gelem/s 12.922 Gelem/s]
-Found 8 outliers among 50 measurements (16.00%)
-  5 (10.00%) high mild
-  3 (6.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_scalar/4096
-                        time:   [2.5855 µs 2.5872 µs 2.5896 µs]
-                        thrpt:  [1.5817 Gelem/s 1.5832 Gelem/s 1.5842 Gelem/s]
-Found 10 outliers among 50 measurements (20.00%)
+background_simd_vs_scalar/sum_abs_dev_scalar/1024
+                        time:   [637.56 ns 638.05 ns 638.68 ns]
+                        thrpt:  [1.6033 Gelem/s 1.6049 Gelem/s 1.6061 Gelem/s]
+                 change:
+                        time:   [+0.0161% +0.1406% +0.2740%] (p = 0.03 < 0.05)
+                        thrpt:  [−0.2733% −0.1404% −0.0161%]
+                        Change within noise threshold.
+Found 6 outliers among 50 measurements (12.00%)
   2 (4.00%) high mild
-  8 (16.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_simd/4096
-                        time:   [314.77 ns 315.01 ns 315.31 ns]
-                        thrpt:  [12.990 Gelem/s 13.003 Gelem/s 13.013 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
-  1 (2.00%) high mild
-  2 (4.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_scalar/16384
-                        time:   [10.386 µs 10.390 µs 10.394 µs]
-                        thrpt:  [1.5763 Gelem/s 1.5769 Gelem/s 1.5775 Gelem/s]
-Found 1 outliers among 50 measurements (2.00%)
-  1 (2.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_simd/16384
-                        time:   [1.2916 µs 1.2923 µs 1.2932 µs]
-                        thrpt:  [12.669 Gelem/s 12.678 Gelem/s 12.685 Gelem/s]
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_abs_dev_simd/1024
+                        time:   [70.678 ns 70.740 ns 70.814 ns]
+                        thrpt:  [14.460 Gelem/s 14.476 Gelem/s 14.488 Gelem/s]
+                 change:
+                        time:   [−0.1405% +0.0315% +0.1944%] (p = 0.72 > 0.05)
+                        thrpt:  [−0.1940% −0.0315% +0.1407%]
+                        No change in performance detected.
 Found 8 outliers among 50 measurements (16.00%)
-  3 (6.00%) high mild
-  5 (10.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_scalar/16384
-                        time:   [10.391 µs 10.397 µs 10.404 µs]
-                        thrpt:  [1.5748 Gelem/s 1.5759 Gelem/s 1.5767 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
+  4 (8.00%) high mild
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_scalar/4096
+                        time:   [2.5842 µs 2.5863 µs 2.5890 µs]
+                        thrpt:  [1.5821 Gelem/s 1.5837 Gelem/s 1.5850 Gelem/s]
+                 change:
+                        time:   [−0.0889% +0.0060% +0.1005%] (p = 0.91 > 0.05)
+                        thrpt:  [−0.1004% −0.0060% +0.0890%]
+                        No change in performance detected.
+Found 5 outliers among 50 measurements (10.00%)
   1 (2.00%) high mild
-  2 (4.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_simd/16384
-                        time:   [1.2922 µs 1.2932 µs 1.2945 µs]
-                        thrpt:  [12.657 Gelem/s 12.669 Gelem/s 12.679 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
-  3 (6.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_scalar/65536
-                        time:   [41.558 µs 41.579 µs 41.604 µs]
-                        thrpt:  [1.5752 Gelem/s 1.5762 Gelem/s 1.5770 Gelem/s]
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_simd/4096
+                        time:   [316.15 ns 316.37 ns 316.64 ns]
+                        thrpt:  [12.936 Gelem/s 12.947 Gelem/s 12.956 Gelem/s]
+                 change:
+                        time:   [−0.3472% −0.2268% −0.0999%] (p = 0.00 < 0.05)
+                        thrpt:  [+0.1000% +0.2273% +0.3484%]
+                        Change within noise threshold.
+Found 8 outliers among 50 measurements (16.00%)
+  4 (8.00%) high mild
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_abs_dev_scalar/4096
+                        time:   [2.5866 µs 2.5885 µs 2.5911 µs]
+                        thrpt:  [1.5808 Gelem/s 1.5824 Gelem/s 1.5835 Gelem/s]
+                 change:
+                        time:   [−0.2068% −0.0483% +0.1031%] (p = 0.55 > 0.05)
+                        thrpt:  [−0.1030% +0.0483% +0.2072%]
+                        No change in performance detected.
 Found 7 outliers among 50 measurements (14.00%)
   1 (2.00%) high mild
   6 (12.00%) high severe
-background_simd_vs_scalar/sum_and_sum_sq_simd/65536
-                        time:   [5.1896 µs 5.1924 µs 5.1967 µs]
-                        thrpt:  [12.611 Gelem/s 12.621 Gelem/s 12.628 Gelem/s]
-Found 11 outliers among 50 measurements (22.00%)
-  2 (4.00%) high mild
-  9 (18.00%) high severe
-background_simd_vs_scalar/sum_abs_dev_scalar/65536
-                        time:   [41.592 µs 41.608 µs 41.626 µs]
-                        thrpt:  [1.5744 Gelem/s 1.5751 Gelem/s 1.5757 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
-  1 (2.00%) high mild
+background_simd_vs_scalar/sum_abs_dev_simd/4096
+                        time:   [314.39 ns 314.68 ns 315.05 ns]
+                        thrpt:  [13.001 Gelem/s 13.016 Gelem/s 13.029 Gelem/s]
+                 change:
+                        time:   [−0.1984% −0.0830% +0.0491%] (p = 0.19 > 0.05)
+                        thrpt:  [−0.0491% +0.0830% +0.1988%]
+                        No change in performance detected.
+Found 10 outliers among 50 measurements (20.00%)
+  4 (8.00%) high mild
+  6 (12.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_scalar/16384
+                        time:   [10.383 µs 10.389 µs 10.397 µs]
+                        thrpt:  [1.5758 Gelem/s 1.5770 Gelem/s 1.5780 Gelem/s]
+                 change:
+                        time:   [−0.0608% +0.0285% +0.1305%] (p = 0.59 > 0.05)
+                        thrpt:  [−0.1303% −0.0285% +0.0609%]
+                        No change in performance detected.
+Found 6 outliers among 50 measurements (12.00%)
+  3 (6.00%) high mild
+  3 (6.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_simd/16384
+                        time:   [1.2944 µs 1.2957 µs 1.2970 µs]
+                        thrpt:  [12.632 Gelem/s 12.645 Gelem/s 12.657 Gelem/s]
+                 change:
+                        time:   [+0.0752% +0.2010% +0.3230%] (p = 0.00 < 0.05)
+                        thrpt:  [−0.3220% −0.2006% −0.0751%]
+                        Change within noise threshold.
+Found 6 outliers among 50 measurements (12.00%)
+  4 (8.00%) high mild
   2 (4.00%) high severe
+background_simd_vs_scalar/sum_abs_dev_scalar/16384
+                        time:   [10.386 µs 10.391 µs 10.398 µs]
+                        thrpt:  [1.5756 Gelem/s 1.5767 Gelem/s 1.5775 Gelem/s]
+                 change:
+                        time:   [−0.1256% −0.0339% +0.0663%] (p = 0.51 > 0.05)
+                        thrpt:  [−0.0663% +0.0339% +0.1258%]
+                        No change in performance detected.
+Found 5 outliers among 50 measurements (10.00%)
+  1 (2.00%) high mild
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_abs_dev_simd/16384
+                        time:   [1.2920 µs 1.2930 µs 1.2942 µs]
+                        thrpt:  [12.659 Gelem/s 12.671 Gelem/s 12.681 Gelem/s]
+                 change:
+                        time:   [−0.0547% +0.0784% +0.2133%] (p = 0.26 > 0.05)
+                        thrpt:  [−0.2129% −0.0783% +0.0547%]
+                        No change in performance detected.
+Found 7 outliers among 50 measurements (14.00%)
+  2 (4.00%) high mild
+  5 (10.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_scalar/65536
+                        time:   [41.573 µs 41.601 µs 41.637 µs]
+                        thrpt:  [1.5740 Gelem/s 1.5754 Gelem/s 1.5764 Gelem/s]
+                 change:
+                        time:   [−0.0036% +0.0977% +0.2023%] (p = 0.07 > 0.05)
+                        thrpt:  [−0.2019% −0.0976% +0.0036%]
+                        No change in performance detected.
+Found 6 outliers among 50 measurements (12.00%)
+  3 (6.00%) high mild
+  3 (6.00%) high severe
+background_simd_vs_scalar/sum_and_sum_sq_simd/65536
+                        time:   [5.1949 µs 5.1990 µs 5.2043 µs]
+                        thrpt:  [12.593 Gelem/s 12.606 Gelem/s 12.616 Gelem/s]
+                 change:
+                        time:   [−0.0539% +0.0824% +0.2069%] (p = 0.24 > 0.05)
+                        thrpt:  [−0.2065% −0.0823% +0.0539%]
+                        No change in performance detected.
+Found 6 outliers among 50 measurements (12.00%)
+  2 (4.00%) high mild
+  4 (8.00%) high severe
+background_simd_vs_scalar/sum_abs_dev_scalar/65536
+                        time:   [41.574 µs 41.605 µs 41.646 µs]
+                        thrpt:  [1.5737 Gelem/s 1.5752 Gelem/s 1.5764 Gelem/s]
+                 change:
+                        time:   [−0.0374% +0.0725% +0.1984%] (p = 0.22 > 0.05)
+                        thrpt:  [−0.1980% −0.0725% +0.0374%]
+                        No change in performance detected.
+Found 9 outliers among 50 measurements (18.00%)
+  1 (2.00%) high mild
+  8 (16.00%) high severe
 background_simd_vs_scalar/sum_abs_dev_simd/65536
-                        time:   [5.1903 µs 5.1933 µs 5.1975 µs]
-                        thrpt:  [12.609 Gelem/s 12.619 Gelem/s 12.627 Gelem/s]
+                        time:   [5.1945 µs 5.1984 µs 5.2035 µs]
+                        thrpt:  [12.595 Gelem/s 12.607 Gelem/s 12.616 Gelem/s]
+                 change:
+                        time:   [+0.0106% +0.1300% +0.2518%] (p = 0.03 < 0.05)
+                        thrpt:  [−0.2512% −0.1298% −0.0106%]
+                        Change within noise threshold.
 Found 7 outliers among 50 measurements (14.00%)
   2 (4.00%) high mild
   5 (10.00%) high severe
 
 background_interpolation/scalar/64
-                        time:   [41.901 ns 41.940 ns 41.983 ns]
-                        thrpt:  [1.5244 Gelem/s 1.5260 Gelem/s 1.5274 Gelem/s]
-Found 3 outliers among 50 measurements (6.00%)
-  2 (4.00%) high mild
-  1 (2.00%) high severe
-background_interpolation/simd/64
-                        time:   [9.0006 ns 9.0093 ns 9.0185 ns]
-                        thrpt:  [7.0965 Gelem/s 7.1038 Gelem/s 7.1106 Gelem/s]
+                        time:   [41.930 ns 41.984 ns 42.044 ns]
+                        thrpt:  [1.5222 Gelem/s 1.5244 Gelem/s 1.5264 Gelem/s]
+                 change:
+                        time:   [−0.1198% +0.0441% +0.1996%] (p = 0.60 > 0.05)
+                        thrpt:  [−0.1992% −0.0441% +0.1199%]
+                        No change in performance detected.
 Found 5 outliers among 50 measurements (10.00%)
-  3 (6.00%) high mild
-  2 (4.00%) high severe
+  5 (10.00%) high mild
+background_interpolation/simd/64
+                        time:   [8.9591 ns 8.9656 ns 8.9728 ns]
+                        thrpt:  [7.1327 Gelem/s 7.1384 Gelem/s 7.1436 Gelem/s]
+                 change:
+                        time:   [−0.6253% −0.4855% −0.3345%] (p = 0.00 < 0.05)
+                        thrpt:  [+0.3356% +0.4878% +0.6292%]
+                        Change within noise threshold.
+Found 4 outliers among 50 measurements (8.00%)
+  1 (2.00%) high mild
+  3 (6.00%) high severe
 background_interpolation/scalar/256
-                        time:   [162.87 ns 162.97 ns 163.08 ns]
-                        thrpt:  [1.5698 Gelem/s 1.5708 Gelem/s 1.5718 Gelem/s]
-Found 2 outliers among 50 measurements (4.00%)
-  2 (4.00%) high severe
+                        time:   [163.90 ns 164.11 ns 164.33 ns]
+                        thrpt:  [1.5578 Gelem/s 1.5599 Gelem/s 1.5619 Gelem/s]
+                 change:
+                        time:   [+0.5668% +0.6810% +0.8077%] (p = 0.00 < 0.05)
+                        thrpt:  [−0.8012% −0.6764% −0.5636%]
+                        Change within noise threshold.
+Found 5 outliers among 50 measurements (10.00%)
+  4 (8.00%) high mild
+  1 (2.00%) high severe
 background_interpolation/simd/256
-                        time:   [26.183 ns 26.196 ns 26.213 ns]
-                        thrpt:  [9.7663 Gelem/s 9.7726 Gelem/s 9.7774 Gelem/s]
+                        time:   [26.198 ns 26.220 ns 26.247 ns]
+                        thrpt:  [9.7537 Gelem/s 9.7635 Gelem/s 9.7717 Gelem/s]
+                 change:
+                        time:   [+0.0212% +0.1409% +0.2752%] (p = 0.04 < 0.05)
+                        thrpt:  [−0.2745% −0.1407% −0.0212%]
+                        Change within noise threshold.
+Found 5 outliers among 50 measurements (10.00%)
+  2 (4.00%) high mild
+  3 (6.00%) high severe
+background_interpolation/scalar/1024
+                        time:   [636.19 ns 636.71 ns 637.20 ns]
+                        thrpt:  [1.6070 Gelem/s 1.6083 Gelem/s 1.6096 Gelem/s]
+                 change:
+                        time:   [−0.0580% +0.0669% +0.1785%] (p = 0.27 > 0.05)
+                        thrpt:  [−0.1782% −0.0668% +0.0580%]
+                        No change in performance detected.
+Found 3 outliers among 50 measurements (6.00%)
+  3 (6.00%) high mild
+background_interpolation/simd/1024
+                        time:   [119.10 ns 119.20 ns 119.31 ns]
+                        thrpt:  [8.5827 Gelem/s 8.5906 Gelem/s 8.5978 Gelem/s]
+                 change:
+                        time:   [+20.222% +20.374% +20.511%] (p = 0.00 < 0.05)
+                        thrpt:  [−17.020% −16.925% −16.821%]
+                        Performance has regressed.
+Found 6 outliers among 50 measurements (12.00%)
+  3 (6.00%) high mild
+  3 (6.00%) high severe
+background_interpolation/scalar/4096
+                        time:   [2.5174 µs 2.5212 µs 2.5246 µs]
+                        thrpt:  [1.6224 Gelem/s 1.6246 Gelem/s 1.6271 Gelem/s]
+                 change:
+                        time:   [+0.5824% +0.8432% +1.2344%] (p = 0.00 < 0.05)
+                        thrpt:  [−1.2194% −0.8362% −0.5790%]
+                        Change within noise threshold.
+Found 15 outliers among 50 measurements (30.00%)
+  9 (18.00%) low mild
+  2 (4.00%) high mild
+  4 (8.00%) high severe
+background_interpolation/simd/4096
+                        time:   [477.73 ns 478.12 ns 478.63 ns]
+                        thrpt:  [8.5577 Gelem/s 8.5669 Gelem/s 8.5738 Gelem/s]
+                 change:
+                        time:   [+21.822% +21.955% +22.085%] (p = 0.00 < 0.05)
+                        thrpt:  [−18.090% −18.003% −17.913%]
+                        Performance has regressed.
 Found 4 outliers among 50 measurements (8.00%)
   3 (6.00%) high mild
   1 (2.00%) high severe
-background_interpolation/scalar/1024
-                        time:   [635.31 ns 635.69 ns 636.18 ns]
-                        thrpt:  [1.6096 Gelem/s 1.6109 Gelem/s 1.6118 Gelem/s]
-Found 7 outliers among 50 measurements (14.00%)
-  2 (4.00%) low mild
-  5 (10.00%) high severe
-background_interpolation/simd/1024
-                        time:   [98.855 ns 98.928 ns 99.029 ns]
-                        thrpt:  [10.340 Gelem/s 10.351 Gelem/s 10.359 Gelem/s]
-Found 4 outliers among 50 measurements (8.00%)
-  2 (4.00%) high mild
-  2 (4.00%) high severe
-background_interpolation/scalar/4096
-                        time:   [2.5050 µs 2.5059 µs 2.5069 µs]
-                        thrpt:  [1.6339 Gelem/s 1.6346 Gelem/s 1.6352 Gelem/s]
-Found 6 outliers among 50 measurements (12.00%)
-  1 (2.00%) high mild
-  5 (10.00%) high severe
-background_interpolation/simd/4096
-                        time:   [392.04 ns 392.29 ns 392.66 ns]
-                        thrpt:  [10.431 Gelem/s 10.441 Gelem/s 10.448 Gelem/s]
-Found 7 outliers among 50 measurements (14.00%)
-  2 (4.00%) high mild
-  5 (10.00%) high severe
 

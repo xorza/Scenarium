@@ -1,63 +1,109 @@
 cosmic_ray_laplacian/compute_laplacian/512x512
-                        time:   [60.784 µs 60.911 µs 61.040 µs]
-                        thrpt:  [4.2947 Gelem/s 4.3037 Gelem/s 4.3127 Gelem/s]
+                        time:   [63.604 µs 63.703 µs 63.824 µs]
+                        thrpt:  [4.1073 Gelem/s 4.1151 Gelem/s 4.1215 Gelem/s]
+                 change:
+                        time:   [+4.5120% +4.7402% +4.9599%] (p = 0.00 < 0.05)
+                        thrpt:  [−4.7256% −4.5257% −4.3172%]
+                        Performance has regressed.
 cosmic_ray_laplacian/compute_laplacian/1024x1024
-                        time:   [416.25 µs 416.84 µs 417.54 µs]
-                        thrpt:  [2.5113 Gelem/s 2.5155 Gelem/s 2.5191 Gelem/s]
-Found 3 outliers among 30 measurements (10.00%)
+                        time:   [416.59 µs 417.18 µs 417.88 µs]
+                        thrpt:  [2.5093 Gelem/s 2.5135 Gelem/s 2.5171 Gelem/s]
+                 change:
+                        time:   [−0.2123% −0.0002% +0.2370%] (p = 1.00 > 0.05)
+                        thrpt:  [−0.2364% +0.0002% +0.2128%]
+                        No change in performance detected.
+Found 4 outliers among 30 measurements (13.33%)
   2 (6.67%) high mild
-  1 (3.33%) high severe
+  2 (6.67%) high severe
 cosmic_ray_laplacian/compute_laplacian/2048x2048
-                        time:   [1.9172 ms 1.9335 ms 1.9519 ms]
-                        thrpt:  [2.1489 Gelem/s 2.1693 Gelem/s 2.1877 Gelem/s]
-Found 1 outliers among 30 measurements (3.33%)
-  1 (3.33%) high severe
+                        time:   [2.0261 ms 2.0348 ms 2.0439 ms]
+                        thrpt:  [2.0521 Gelem/s 2.0613 Gelem/s 2.0702 Gelem/s]
+                 change:
+                        time:   [+3.5895% +4.6776% +5.6445%] (p = 0.00 < 0.05)
+                        thrpt:  [−5.3429% −4.4685% −3.4651%]
+                        Performance has regressed.
+Found 5 outliers among 30 measurements (16.67%)
+  3 (10.00%) high mild
+  2 (6.67%) high severe
 
 cosmic_ray_simd_vs_scalar/scalar/512x512
-                        time:   [347.37 µs 347.65 µs 348.00 µs]
-                        thrpt:  [753.30 Melem/s 754.05 Melem/s 754.65 Melem/s]
-Found 3 outliers among 30 measurements (10.00%)
-  3 (10.00%) high mild
+                        time:   [401.99 µs 402.36 µs 402.79 µs]
+                        thrpt:  [650.82 Melem/s 651.52 Melem/s 652.11 Melem/s]
+                 change:
+                        time:   [+15.404% +15.610% +15.836%] (p = 0.00 < 0.05)
+                        thrpt:  [−13.671% −13.502% −13.348%]
+                        Performance has regressed.
+Found 5 outliers among 30 measurements (16.67%)
+  2 (6.67%) high mild
+  3 (10.00%) high severe
 cosmic_ray_simd_vs_scalar/simd/512x512
-                        time:   [51.984 µs 52.105 µs 52.242 µs]
-                        thrpt:  [5.0179 Gelem/s 5.0311 Gelem/s 5.0427 Gelem/s]
-Found 1 outliers among 30 measurements (3.33%)
+                        time:   [50.736 µs 50.844 µs 50.939 µs]
+                        thrpt:  [5.1463 Gelem/s 5.1558 Gelem/s 5.1668 Gelem/s]
+                 change:
+                        time:   [−2.8206% −2.5538% −2.3061%] (p = 0.00 < 0.05)
+                        thrpt:  [+2.3605% +2.6207% +2.9024%]
+                        Performance has improved.
+Found 5 outliers among 30 measurements (16.67%)
+  4 (13.33%) low mild
   1 (3.33%) high mild
 cosmic_ray_simd_vs_scalar/scalar/1024x1024
-                        time:   [1.6015 ms 1.6030 ms 1.6047 ms]
-                        thrpt:  [653.44 Melem/s 654.12 Melem/s 654.76 Melem/s]
-cosmic_ray_simd_vs_scalar/simd/1024x1024
-                        time:   [414.24 µs 414.92 µs 415.73 µs]
-                        thrpt:  [2.5223 Gelem/s 2.5272 Gelem/s 2.5313 Gelem/s]
-Found 3 outliers among 30 measurements (10.00%)
-  2 (6.67%) high mild
-  1 (3.33%) high severe
-cosmic_ray_simd_vs_scalar/scalar/2048x2048
-                        time:   [6.2207 ms 6.2295 ms 6.2404 ms]
-                        thrpt:  [672.13 Melem/s 673.29 Melem/s 674.24 Melem/s]
-Found 3 outliers among 30 measurements (10.00%)
+                        time:   [1.5994 ms 1.6012 ms 1.6032 ms]
+                        thrpt:  [654.06 Melem/s 654.85 Melem/s 655.60 Melem/s]
+                 change:
+                        time:   [−0.2934% −0.1395% +0.0142%] (p = 0.09 > 0.05)
+                        thrpt:  [−0.0142% +0.1397% +0.2943%]
+                        No change in performance detected.
+Found 1 outliers among 30 measurements (3.33%)
   1 (3.33%) high mild
-  2 (6.67%) high severe
+cosmic_ray_simd_vs_scalar/simd/1024x1024
+                        time:   [288.55 µs 288.98 µs 289.47 µs]
+                        thrpt:  [3.6224 Gelem/s 3.6286 Gelem/s 3.6340 Gelem/s]
+                 change:
+                        time:   [−30.711% −30.523% −30.338%] (p = 0.00 < 0.05)
+                        thrpt:  [+43.550% +43.933% +44.323%]
+                        Performance has improved.
+Found 7 outliers among 30 measurements (23.33%)
+  4 (13.33%) high mild
+  3 (10.00%) high severe
+cosmic_ray_simd_vs_scalar/scalar/2048x2048
+                        time:   [7.0351 ms 7.0476 ms 7.0613 ms]
+                        thrpt:  [593.99 Melem/s 595.14 Melem/s 596.19 Melem/s]
+                 change:
+                        time:   [+12.387% +12.849% +13.248%] (p = 0.00 < 0.05)
+                        thrpt:  [−11.698% −11.386% −11.021%]
+                        Performance has regressed.
+Found 2 outliers among 30 measurements (6.67%)
+  2 (6.67%) high mild
 cosmic_ray_simd_vs_scalar/simd/2048x2048
-                        time:   [2.9550 ms 2.9587 ms 2.9627 ms]
-                        thrpt:  [1.4157 Gelem/s 1.4176 Gelem/s 1.4194 Gelem/s]
-Found 8 outliers among 30 measurements (26.67%)
-  3 (10.00%) low mild
+                        time:   [2.2977 ms 2.3028 ms 2.3087 ms]
+                        thrpt:  [1.8168 Gelem/s 1.8214 Gelem/s 1.8254 Gelem/s]
+                 change:
+                        time:   [−22.340% −22.080% −21.769%] (p = 0.00 < 0.05)
+                        thrpt:  [+27.826% +28.337% +28.767%]
+                        Performance has improved.
+Found 6 outliers among 30 measurements (20.00%)
   3 (10.00%) high mild
-  2 (6.67%) high severe
+  3 (10.00%) high severe
 
 cosmic_ray_detect/detect_cosmic_rays/512x512
-                        time:   [3.2929 ms 3.2985 ms 3.3053 ms]
-                        thrpt:  [79.309 Melem/s 79.473 Melem/s 79.608 Melem/s]
-Found 2 outliers among 20 measurements (10.00%)
-  1 (5.00%) high mild
-  1 (5.00%) high severe
+                        time:   [3.3406 ms 3.3478 ms 3.3548 ms]
+                        thrpt:  [78.141 Melem/s 78.303 Melem/s 78.471 Melem/s]
+                 change:
+                        time:   [+0.9195% +1.2381% +1.5435%] (p = 0.00 < 0.05)
+                        thrpt:  [−1.5200% −1.2229% −0.9112%]
+                        Change within noise threshold.
 cosmic_ray_detect/detect_cosmic_rays/1024x1024
-                        time:   [13.900 ms 13.933 ms 13.963 ms]
-                        thrpt:  [75.098 Melem/s 75.257 Melem/s 75.437 Melem/s]
+                        time:   [14.055 ms 14.101 ms 14.154 ms]
+                        thrpt:  [74.085 Melem/s 74.362 Melem/s 74.607 Melem/s]
+                 change:
+                        time:   [+0.9427% +1.2411% +1.5399%] (p = 0.00 < 0.05)
+                        thrpt:  [−1.5166% −1.2259% −0.9339%]
+                        Change within noise threshold.
 cosmic_ray_detect/detect_cosmic_rays/2048x2048
-                        time:   [63.498 ms 63.574 ms 63.659 ms]
-                        thrpt:  [65.887 Melem/s 65.976 Melem/s 66.054 Melem/s]
-Found 2 outliers among 20 measurements (10.00%)
-  2 (10.00%) high mild
+                        time:   [63.678 ms 63.747 ms 63.820 ms]
+                        thrpt:  [65.721 Melem/s 65.796 Melem/s 65.867 Melem/s]
+                 change:
+                        time:   [+0.1079% +0.2730% +0.4457%] (p = 0.00 < 0.05)
+                        thrpt:  [−0.4437% −0.2722% −0.1078%]
+                        Change within noise threshold.
 

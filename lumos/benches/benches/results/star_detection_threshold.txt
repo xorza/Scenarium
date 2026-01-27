@@ -1,5 +1,9 @@
 create_threshold_mask/dispatch
-                        time:   [4.8463 ms 4.8722 ms 4.8979 ms]
+                        time:   [5.3758 ms 5.4000 ms 5.4245 ms]
+                        change: [+10.038% +10.834% +11.582%] (p = 0.00 < 0.05)
+                        Performance has regressed.
 create_threshold_mask/scalar
-                        time:   [6.5435 ms 6.5858 ms 6.6283 ms]
+                        time:   [6.5654 ms 6.6072 ms 6.6488 ms]
+                        change: [−0.5938% +0.3249% +1.1833%] (p = 0.48 > 0.05)
+                        No change in performance detected.
 

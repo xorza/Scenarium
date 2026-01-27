@@ -1,0 +1,19 @@
+median_calculation/quickselect/20
+                        time:   [63.543 ns 63.591 ns 63.650 ns]
+                        thrpt:  [314.22 Melem/s 314.51 Melem/s 314.75 Melem/s]
+Found 13 outliers among 100 measurements (13.00%)
+  5 (5.00%) high mild
+  8 (8.00%) high severe
+median_calculation/quickselect/50
+                        time:   [45.827 ns 45.876 ns 45.931 ns]
+                        thrpt:  [1.0886 Gelem/s 1.0899 Gelem/s 1.0910 Gelem/s]
+Found 12 outliers among 100 measurements (12.00%)
+  2 (2.00%) high mild
+  10 (10.00%) high severe
+median_calculation/quickselect/100
+                        time:   [174.18 ns 174.34 ns 174.51 ns]
+                        thrpt:  [573.04 Melem/s 573.58 Melem/s 574.11 Melem/s]
+Found 7 outliers among 100 measurements (7.00%)
+  6 (6.00%) high mild
+  1 (1.00%) high severe
+

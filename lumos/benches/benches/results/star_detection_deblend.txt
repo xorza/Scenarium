@@ -1,26 +1,49 @@
 deblend_local_maxima/local_maxima/10pairs_sep15
-                        time:   [23.329 µs 23.349 µs 23.373 µs]
-                        thrpt:  [427.85 Kelem/s 428.29 Kelem/s 428.65 Kelem/s]
-Found 5 outliers among 50 measurements (10.00%)
-  1 (2.00%) high mild
-  4 (8.00%) high severe
+                        time:   [23.175 µs 23.200 µs 23.230 µs]
+                        thrpt:  [430.48 Kelem/s 431.03 Kelem/s 431.50 Kelem/s]
+                 change:
+                        time:   [−0.5668% −0.3632% −0.1345%] (p = 0.00 < 0.05)
+                        thrpt:  [+0.1347% +0.3646% +0.5700%]
+                        Change within noise threshold.
+Found 4 outliers among 50 measurements (8.00%)
+  3 (6.00%) high mild
+  1 (2.00%) high severe
 deblend_local_maxima/local_maxima/50pairs_sep12
-                        time:   [126.87 µs 127.06 µs 127.26 µs]
-                        thrpt:  [392.90 Kelem/s 393.50 Kelem/s 394.09 Kelem/s]
+                        time:   [122.81 µs 122.96 µs 123.16 µs]
+                        thrpt:  [405.97 Kelem/s 406.63 Kelem/s 407.14 Kelem/s]
+                 change:
+                        time:   [−2.4426% −2.0966% −1.7223%] (p = 0.00 < 0.05)
+                        thrpt:  [+1.7525% +2.1415% +2.5037%]
+                        Performance has improved.
 deblend_local_maxima/local_maxima/100pairs_sep10
-                        time:   [305.92 µs 306.13 µs 306.37 µs]
-                        thrpt:  [326.41 Kelem/s 326.66 Kelem/s 326.88 Kelem/s]
+                        time:   [309.01 µs 309.31 µs 309.63 µs]
+                        thrpt:  [322.96 Kelem/s 323.30 Kelem/s 323.61 Kelem/s]
+                 change:
+                        time:   [+0.9860% +1.1390% +1.2896%] (p = 0.00 < 0.05)
+                        thrpt:  [−1.2731% −1.1262% −0.9764%]
+                        Change within noise threshold.
 Found 6 outliers among 50 measurements (12.00%)
   3 (6.00%) high mild
   3 (6.00%) high severe
 
 deblend_multi_threshold/multi_threshold/10pairs_sep15
-                        time:   [22.478 ms 22.491 ms 22.506 ms]
-                        thrpt:  [444.33  elem/s 444.63  elem/s 444.88  elem/s]
-Found 2 outliers among 30 measurements (6.67%)
-  1 (3.33%) high mild
+                        time:   [22.535 ms 22.555 ms 22.580 ms]
+                        thrpt:  [442.88  elem/s 443.35  elem/s 443.75  elem/s]
+                 change:
+                        time:   [+0.1765% +0.2870% +0.4167%] (p = 0.00 < 0.05)
+                        thrpt:  [−0.4149% −0.2861% −0.1762%]
+                        Change within noise threshold.
+Found 4 outliers among 30 measurements (13.33%)
+  3 (10.00%) high mild
   1 (3.33%) high severe
 deblend_multi_threshold/multi_threshold/50pairs_sep12
-                        time:   [99.955 ms 100.02 ms 100.08 ms]
-                        thrpt:  [499.59  elem/s 499.91  elem/s 500.22  elem/s]
+                        time:   [100.94 ms 101.04 ms 101.16 ms]
+                        thrpt:  [494.25  elem/s 494.84  elem/s 495.35  elem/s]
+                 change:
+                        time:   [+0.9016% +1.0237% +1.1507%] (p = 0.00 < 0.05)
+                        thrpt:  [−1.1376% −1.0133% −0.8936%]
+                        Change within noise threshold.
+Found 5 outliers among 30 measurements (16.67%)
+  3 (10.00%) high mild
+  2 (6.67%) high severe
 

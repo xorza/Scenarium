@@ -1,0 +1,35 @@
+star_detection/single_image/6032
+                        time:   [620.41 ms 623.75 ms 627.28 ms]
+star_detection/all_images/10
+                        time:   [6.2323 s 6.2412 s 6.2485 s]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) low mild
+
+registration/single_pair
+                        time:   [332.59 ms 343.94 ms 355.50 ms]
+registration/all_to_reference/9
+                        time:   [2.9559 s 3.0087 s 3.0587 s]
+
+warping/cpu_sequential_bilinear
+                        time:   [280.61 ms 281.65 ms 282.71 ms]
+warping/cpu_parallel_bilinear
+                        time:   [338.82 ms 341.22 ms 343.68 ms]
+warping/cpu_parallel_lanczos3
+                        time:   [1.4934 s 1.4979 s 1.5022 s]
+warping/gpu_bilinear    time:   [370.03 ms 371.49 ms 372.94 ms]
+warping/cpu_parallel_batch/5
+                        time:   [1.6151 s 1.6263 s 1.6397 s]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high severe
+warping/gpu_batch/5     time:   [2.1505 s 2.2771 s 2.3872 s]
+
+stacking/mean_accumulate/10
+                        time:   [802.26 ms 804.29 ms 806.46 ms]
+
+full_pipeline/cpu_warp/10
+                        time:   [12.747 s 12.828 s 12.917 s]
+full_pipeline/gpu_warp/10
+                        time:   [13.977 s 14.070 s 14.182 s]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+
