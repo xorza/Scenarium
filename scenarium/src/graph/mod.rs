@@ -19,7 +19,7 @@ id_type!(NodeId);
 
 pub(crate) mod clone;
 pub(crate) mod interface;
-mod normalize;
+pub(crate) mod normalize;
 mod query;
 mod serde;
 #[cfg(test)]
@@ -218,8 +218,10 @@ pub enum NodeSearch {
     Recursive,
 }
 
-#[derive(Clone, Default, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Graph {
+/// The authored identity and external interface of a graph that can be
+/// instantiated as a node. Entry graphs have no definition.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GraphDefinition {
     pub name: String,
     pub category: String,
 
@@ -235,9 +237,15 @@ pub struct Graph {
     #[serde(default)]
     pub events: Vec<GraphEvent>,
 
-    /// Shared-library graph this value was copied from, if any.
+    /// Shared-library graph this definition was copied from, if any.
     #[serde(default)]
     pub origin: Option<GraphId>,
+}
+
+#[derive(Clone, Default, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Graph {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub definition: Option<GraphDefinition>,
 
     pub(crate) nodes: HashMap<NodeId, Node>,
 
@@ -271,48 +279,67 @@ pub struct Graph {
 impl Graph {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
-            name: name.into(),
+            definition: Some(GraphDefinition {
+                name: name.into(),
+                category: String::new(),
+                inputs: Vec::new(),
+                outputs: Vec::new(),
+                events: Vec::new(),
+                origin: None,
+            }),
             ..Default::default()
         }
     }
 
+    pub fn definition(&self) -> &GraphDefinition {
+        self.definition
+            .as_ref()
+            .expect("entry graph has no reusable definition")
+    }
+
+    pub fn definition_mut(&mut self) -> &mut GraphDefinition {
+        self.definition
+            .as_mut()
+            .expect("entry graph has no reusable definition")
+    }
+
     pub fn category(mut self, category: impl Into<String>) -> Self {
-        self.category = category.into();
+        self.definition_mut().category = category.into();
         self
     }
 
     pub fn input(mut self, input: FuncInput) -> Self {
-        self.inputs.push(input);
+        self.definition_mut().inputs.push(input);
         self
     }
 
     pub fn inputs(mut self, inputs: impl IntoIterator<Item = FuncInput>) -> Self {
-        self.inputs.extend(inputs);
+        self.definition_mut().inputs.extend(inputs);
         self
     }
 
     pub fn output(mut self, output: FuncOutput) -> Self {
-        self.outputs.push(output);
+        self.definition_mut().outputs.push(output);
         self
     }
 
     pub fn outputs(mut self, outputs: impl IntoIterator<Item = FuncOutput>) -> Self {
-        self.outputs.extend(outputs);
+        self.definition_mut().outputs.extend(outputs);
         self
     }
 
     pub fn event(mut self, event: GraphEvent) -> Self {
-        self.events.push(event);
+        self.definition_mut().events.push(event);
         self
     }
 
     pub fn events(mut self, events: impl IntoIterator<Item = GraphEvent>) -> Self {
-        self.events.extend(events);
+        self.definition_mut().events.extend(events);
         self
     }
 
     pub fn origin(mut self, origin: GraphId) -> Self {
-        self.origin = Some(origin);
+        self.definition_mut().origin = Some(origin);
         self
     }
 
@@ -446,7 +473,7 @@ impl Graph {
     pub fn add_graph_node(&mut self, graph: &Graph, link: GraphLink) -> NodeId {
         let node = Node::graph_instance(graph, link);
         let node_id = self.add(node);
-        for (port_idx, io) in graph.inputs.iter().enumerate() {
+        for (port_idx, io) in graph.definition().inputs.iter().enumerate() {
             if let Some(default) = &io.default_value {
                 self.set_input_binding(
                     InputPort::new(node_id, port_idx),
@@ -480,7 +507,7 @@ impl Node {
     pub fn graph_instance(graph: &Graph, link: GraphLink) -> Self {
         Node {
             kind: NodeKind::Graph(link),
-            name: graph.name.clone(),
+            name: graph.definition().name.clone(),
             cache: CacheMode::None,
             disabled: false,
         }

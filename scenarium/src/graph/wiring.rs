@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
+use crate::graph::interface::GraphEvent;
 use crate::graph::{Binding, Graph, InputPort, Node, NodeId, NodeSearch, OutputPort, Subscription};
 
 fn binding_touches(port: InputPort, binding: &Binding, node_id: NodeId) -> bool {
@@ -48,6 +49,13 @@ pub struct DetachedNode {
     pub bindings: Vec<BindingEntry>,
     pub subscriptions: Vec<Subscription>,
     pub pinned_outputs: Vec<OutputPort>,
+    pub exposed_events: Vec<DetachedGraphEvent>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DetachedGraphEvent {
+    pub idx: usize,
+    pub event: GraphEvent,
 }
 
 impl DetachedNode {
@@ -97,6 +105,20 @@ impl DetachedNode {
         {
             return Err("detached pins must be unique and ordered");
         }
+        if self
+            .exposed_events
+            .iter()
+            .any(|entry| entry.event.emitter != self.node_id)
+        {
+            return Err("detached exposed events must belong to the detached node");
+        }
+        if self
+            .exposed_events
+            .windows(2)
+            .any(|entries| entries[0].idx >= entries[1].idx)
+        {
+            return Err("detached exposed events must have unique ordered indices");
+        }
         Ok(())
     }
 }
@@ -126,6 +148,22 @@ impl Graph {
                 .copied()
                 .filter(|port| port.node_id == node_id)
                 .collect(),
+            exposed_events: self
+                .definition
+                .as_ref()
+                .map(|definition| {
+                    definition
+                        .events
+                        .iter()
+                        .enumerate()
+                        .filter(|(_, event)| event.emitter == node_id)
+                        .map(|(idx, event)| DetachedGraphEvent {
+                            idx,
+                            event: event.clone(),
+                        })
+                        .collect()
+                })
+                .unwrap_or_default(),
         })
     }
 
@@ -140,6 +178,9 @@ impl Graph {
         self.subscriptions
             .retain(|subscription| !subscription_touches(subscription, node_id));
         self.pinned_outputs.retain(|port| port.node_id != node_id);
+        if let Some(definition) = &mut self.definition {
+            definition.events.retain(|event| event.emitter != node_id);
+        }
         detached
     }
 
@@ -172,13 +213,24 @@ impl Graph {
                 .all(|port| !self.pinned_outputs.contains(port)),
             "cannot attach over pins created after detachment"
         );
-
+        let event_len = self
+            .definition
+            .as_ref()
+            .map(|definition| definition.events.len())
+            .unwrap_or_default();
+        for (event_len, entry) in (event_len..).zip(&detached.exposed_events) {
+            assert!(
+                entry.idx <= event_len,
+                "cannot attach an exposed event outside the graph interface"
+            );
+        }
         let DetachedNode {
             node_id,
             node,
             bindings,
             subscriptions,
             pinned_outputs,
+            exposed_events,
         } = detached;
         self.insert(node_id, node);
         self.bindings.extend(
@@ -188,6 +240,11 @@ impl Graph {
         );
         self.subscriptions.extend(subscriptions);
         self.pinned_outputs.extend(pinned_outputs);
+        for entry in exposed_events {
+            self.definition_mut()
+                .events
+                .insert(entry.idx, entry.event);
+        }
     }
 
     pub fn set_input_binding(&mut self, port: InputPort, binding: impl Into<Option<Binding>>) {

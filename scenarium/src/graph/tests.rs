@@ -1,5 +1,5 @@
 use crate::error::{GraphDeserializeError, GraphValidationError};
-use crate::graph::interface::{GraphId, GraphLink};
+use crate::graph::interface::{GraphEvent, GraphId, GraphLink};
 use crate::graph::{
     Binding, CacheMode, Graph, InputPort, Node, NodeId, NodeKind, NodeSearch, OutputPort,
 };
@@ -986,6 +986,23 @@ fn wiring_snapshot_round_trips_through_serde_and_restore() -> TestResult {
     // Add a subscription that touches `sum` so both arms are exercised.
     graph.subscribe(get_a_id, 0, sum_id);
     graph.set_output_pinned(pinned, true);
+    graph.events = vec![
+        GraphEvent {
+            name: "sum first".to_owned(),
+            emitter: sum_id,
+            emitter_event_idx: 0,
+        },
+        GraphEvent {
+            name: "other".to_owned(),
+            emitter: get_a_id,
+            emitter_event_idx: 0,
+        },
+        GraphEvent {
+            name: "sum last".to_owned(),
+            emitter: sum_id,
+            emitter_event_idx: 1,
+        },
+    ];
 
     let bindings = graph.bindings_touching(sum_id);
 
@@ -997,6 +1014,14 @@ fn wiring_snapshot_round_trips_through_serde_and_restore() -> TestResult {
     assert_eq!(graph.edges().count(), edges_before - 3);
     assert!(!graph.is_subscribed(get_a_id, 0, sum_id));
     assert!(!graph.is_output_pinned(pinned));
+    assert_eq!(
+        graph.events,
+        [GraphEvent {
+            name: "other".to_owned(),
+            emitter: get_a_id,
+            emitter_event_idx: 0,
+        }]
+    );
 
     let serialized = serialize(&detached, SerdeFormat::Bitcode)?;
     let decoded: DetachedNode = deserialize(&serialized, SerdeFormat::Bitcode)?;
@@ -1006,7 +1031,11 @@ fn wiring_snapshot_round_trips_through_serde_and_restore() -> TestResult {
     nil_id.node_id = NodeId::nil();
     let mut mismatched = detached.clone();
     mismatched.node_id = NodeId::unique();
-    for invalid in [nil_id, mismatched] {
+    let mut misordered_events = detached.clone();
+    misordered_events.exposed_events.reverse();
+    let mut out_of_bounds_event = detached.clone();
+    out_of_bounds_event.exposed_events.last_mut().unwrap().idx += 10;
+    for invalid in [nil_id, mismatched, misordered_events, out_of_bounds_event] {
         let serialized = serialize(&invalid, SerdeFormat::Json)?;
         let decoded_invalid: DetachedNode = deserialize(&serialized, SerdeFormat::Json)?;
         let detached_graph = graph.clone();

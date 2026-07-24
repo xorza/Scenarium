@@ -345,7 +345,7 @@ fn tab_text(doc: &Document, tab: TabRef) -> Cow<'_, str> {
             .graph
             .graphs
             .get(&id)
-            .map(|d| d.name.as_str())
+            .map(|graph| graph.definition().name.as_str())
             .unwrap_or("graph")
             .into(),
         TabRef::Preferences => Cow::Borrowed("preferences"),

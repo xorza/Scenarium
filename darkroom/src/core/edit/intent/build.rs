@@ -40,7 +40,7 @@ pub(crate) fn build_step(intent: Intent, doc: &Document, target: GraphRef) -> Op
         }));
     }
     if let Intent::RenameGraph { id, to } = intent {
-        let from = doc.graph.graphs.get(&id)?.name.clone();
+        let from = doc.graph.graphs.get(&id)?.definition().name.clone();
         return Some(UndoStep::Doc(DocStep::RenameGraph { id, from, to }));
     }
     if let Intent::RenameBoundaryPort { side, idx, to } = intent {
@@ -175,7 +175,7 @@ pub(crate) fn build_step(intent: Intent, doc: &Document, target: GraphRef) -> Op
             };
             let to_id = GraphId::unique();
             let mut copy = graph.graphs.get(&from_id)?.fresh_copy();
-            copy.origin = None; // detach severs the library lineage
+            copy.definition_mut().origin = None; // detach severs the library lineage
             GraphStep::DetachGraph {
                 node_id,
                 from_id,
@@ -247,13 +247,13 @@ fn reuse_local_graph(
     pending: Option<(GraphId, Box<Graph>)>,
 ) -> Option<(GraphId, Box<Graph>)> {
     let (graph_id, pending) = pending?;
-    let Some(origin) = pending.origin else {
+    let Some(origin) = pending.definition().origin else {
         return Some((graph_id, pending));
     };
     match graph
         .graphs
         .iter()
-        .find(|(_, existing)| existing.origin == Some(origin))
+        .find(|(_, existing)| existing.definition().origin == Some(origin))
     {
         Some((existing_id, _)) => {
             node.kind = NodeKind::Graph(GraphLink::Local(*existing_id));

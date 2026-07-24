@@ -98,10 +98,7 @@ impl Document {
     /// Full structural validation for untrusted documents.
     pub(crate) fn validate(&self) -> Result<(), DocumentValidationError> {
         self.graph.validate()?;
-        if !self.graph.inputs.is_empty()
-            || !self.graph.outputs.is_empty()
-            || !self.graph.events.is_empty()
-        {
+        if self.graph.definition.is_some() {
             return Err(DocumentValidationError::EntryInterface);
         }
         if self.graph.iter().any(|node| node.kind.is_boundary()) {

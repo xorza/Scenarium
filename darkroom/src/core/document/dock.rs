@@ -480,11 +480,33 @@ impl DockLayout {
     /// Drop every tab failing `keep`, collapsing groups that empty —
     /// the layout half of `Document::ensure_valid_layout` pruning.
     pub(crate) fn retain_tabs(&mut self, mut keep: impl FnMut(TabRef) -> bool) {
+        self.remap_tabs(|tab| keep(tab).then_some(tab));
+    }
+
+    pub(crate) fn remap_tabs(&mut self, mut remap: impl FnMut(TabRef) -> Option<TabRef>) {
         for node in &mut self.nodes {
-            if let DockNode::Group(g) = node {
-                g.tabs.retain(|t| keep(*t));
-                g.clamp_active();
+            let DockNode::Group(group) = node else {
+                continue;
+            };
+            let old_active = group.active;
+            let mut active = None;
+            let mut tabs = Vec::with_capacity(group.tabs.len());
+            for (index, tab) in std::mem::take(&mut group.tabs).into_iter().enumerate() {
+                let Some(tab) = remap(tab) else {
+                    continue;
+                };
+                let mapped_index = tabs.iter().position(|existing| *existing == tab);
+                let mapped_index = mapped_index.unwrap_or_else(|| {
+                    tabs.push(tab);
+                    tabs.len() - 1
+                });
+                if index == old_active {
+                    active = Some(mapped_index);
+                }
             }
+            group.tabs = tabs;
+            group.active = active.unwrap_or(old_active);
+            group.clamp_active();
         }
         self.normalize();
     }

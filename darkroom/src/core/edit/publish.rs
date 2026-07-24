@@ -22,6 +22,7 @@ pub(crate) fn publish_graph(
         };
         let local = scope.graph.graphs.get(&local_id)?;
         let existing_lib = local
+            .definition()
             .origin
             .filter(|id| graph_library.graphs.contains_key(id));
         Some(PublishSource {
@@ -52,7 +53,7 @@ fn set_origin(document: &mut Document, holder: GraphRef, graph_id: GraphId, orig
     if let Some(graph) = document.graph_mut(holder)
         && let Some(nested) = graph.graphs.get_mut(&graph_id)
     {
-        nested.origin = Some(origin);
+        nested.definition_mut().origin = Some(origin);
     }
 }
 
@@ -130,7 +131,7 @@ mod tests {
 
     fn graph(name: &str, origin: Option<GraphId>) -> Graph {
         let mut graph = Graph::new(name);
-        graph.origin = origin;
+        graph.definition_mut().origin = origin;
         graph
     }
 

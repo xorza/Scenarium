@@ -290,21 +290,28 @@ impl Scene {
                     uncacheable: f.uncacheable,
                     impure: f.behavior == FuncBehavior::Impure,
                 }),
-                NodeKind::Graph(r) => graph.resolve_graph(*r, library).map(|d| NodeInterface {
-                    kind_label: ui.intern(&d.name),
-                    description: ui.intern(""),
-                    inputs: Cow::Borrowed(&d.inputs),
-                    outputs: Cow::Borrowed(&d.outputs),
-                    events: d.events.iter().map(|e| ui.intern(&e.name)).collect(),
-                    graph: Some(*r),
-                    // A composite's sink-ness is derived at flatten
-                    // time, not stored separately; treat "no exposed
-                    // outputs" as the visible sink signal.
-                    sink: d.outputs.is_empty(),
-                    uncacheable: false,
-                    // Aggregate purity of a composite isn't known here, so the
-                    // cache chips stay available for it (unlike a func).
-                    impure: false,
+                NodeKind::Graph(r) => graph.resolve_graph(*r, library).map(|graph| {
+                    let definition = graph.definition();
+                    NodeInterface {
+                        kind_label: ui.intern(&definition.name),
+                        description: ui.intern(""),
+                        inputs: Cow::Borrowed(&definition.inputs),
+                        outputs: Cow::Borrowed(&definition.outputs),
+                        events: definition
+                            .events
+                            .iter()
+                            .map(|event| ui.intern(&event.name))
+                            .collect(),
+                        graph: Some(*r),
+                        // A composite's sink-ness is derived at flatten
+                        // time, not stored separately; treat "no exposed
+                        // outputs" as the visible sink signal.
+                        sink: definition.outputs.is_empty(),
+                        uncacheable: false,
+                        // Aggregate purity of a composite isn't known here, so the
+                        // cache chips stay available for it (unlike a func).
+                        impure: false,
+                    }
                 }),
                 // A built-in special node: its interface is the hardcoded spec.
                 // Any wildcard output it declares is resolved below, with every
@@ -329,8 +336,12 @@ impl Scene {
                 // index; document normalization then grows `graph.inputs` to
                 // match and a fresh placeholder appears next frame.
                 NodeKind::GraphInput => {
-                    let mut outputs: Vec<FuncOutput> =
-                        graph.inputs.iter().map(boundary_output).collect();
+                    let mut outputs: Vec<FuncOutput> = graph
+                        .definition()
+                        .inputs
+                        .iter()
+                        .map(boundary_output)
+                        .collect();
                     outputs.push(placeholder_output());
                     Some(NodeInterface {
                         kind_label: ui.intern("Input"),
@@ -349,8 +360,12 @@ impl Scene {
                 // trailing placeholder input. Symmetric to the inbound
                 // case — wiring the placeholder grows `graph.outputs`.
                 NodeKind::GraphOutput => {
-                    let mut inputs: Vec<FuncInput> =
-                        graph.outputs.iter().map(boundary_input).collect();
+                    let mut inputs: Vec<FuncInput> = graph
+                        .definition()
+                        .outputs
+                        .iter()
+                        .map(boundary_input)
+                        .collect();
                     inputs.push(placeholder_input());
                     Some(NodeInterface {
                         kind_label: ui.intern("Output"),

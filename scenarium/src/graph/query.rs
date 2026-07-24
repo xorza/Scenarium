@@ -30,7 +30,7 @@ impl Graph {
         let node = self.find(&port.node_id, NodeSearch::TopLevel)?;
         let inputs = match &node.kind {
             NodeKind::Func(func_id) => &library.by_id(func_id)?.inputs,
-            NodeKind::Graph(r) => &self.resolve_graph(*r, library)?.inputs,
+            NodeKind::Graph(r) => &self.resolve_graph(*r, library)?.definition().inputs,
             NodeKind::Special(s) => &s.func().inputs,
             NodeKind::GraphInput | NodeKind::GraphOutput => return None,
         };
@@ -42,10 +42,10 @@ impl Graph {
             NodeKind::Func(id) => library.by_id(id).map(|function| function.inputs.len()),
             NodeKind::Graph(reference) => self
                 .resolve_graph(*reference, library)
-                .map(|graph| graph.inputs.len()),
+                .map(|graph| graph.definition().inputs.len()),
             NodeKind::Special(special) => Some(special.func().inputs.len()),
             NodeKind::GraphInput => Some(0),
-            NodeKind::GraphOutput => Some(self.outputs.len()),
+            NodeKind::GraphOutput => Some(self.definition().outputs.len()),
         }
     }
 
@@ -54,9 +54,9 @@ impl Graph {
             NodeKind::Func(id) => library.by_id(id).map(|function| function.outputs.len()),
             NodeKind::Graph(reference) => self
                 .resolve_graph(*reference, library)
-                .map(|graph| graph.outputs.len()),
+                .map(|graph| graph.definition().outputs.len()),
             NodeKind::Special(special) => Some(special.func().outputs.len()),
-            NodeKind::GraphInput => Some(self.inputs.len()),
+            NodeKind::GraphInput => Some(self.definition().inputs.len()),
             NodeKind::GraphOutput => Some(0),
         }
     }
@@ -66,7 +66,7 @@ impl Graph {
             NodeKind::Func(id) => library.by_id(id).map(|function| function.events.len()),
             NodeKind::Graph(reference) => self
                 .resolve_graph(*reference, library)
-                .map(|graph| graph.events.len()),
+                .map(|graph| graph.definition().events.len()),
             NodeKind::Special(special) => Some(special.func().events.len()),
             NodeKind::GraphInput => Some(1),
             NodeKind::GraphOutput => Some(0),
@@ -121,7 +121,7 @@ impl Graph {
             NodeKind::Func(func_id) => library.by_id(func_id).map(|f| f.outputs.as_slice()),
             NodeKind::Graph(r) => self
                 .resolve_graph(*r, library)
-                .map(|d| d.outputs.as_slice()),
+                .map(|graph| graph.definition().outputs.as_slice()),
             NodeKind::Special(s) => Some(s.func().outputs.as_slice()),
             NodeKind::GraphInput | NodeKind::GraphOutput => None,
         }

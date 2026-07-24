@@ -107,10 +107,14 @@ fn read(path: &Path) -> Result<GraphLibrary, GraphLibraryReadError> {
             });
         }
         graph
-            .validate()
+            .validate_subgraph()
             .map_err(|error| GraphLibraryReadError::InvalidGraph {
                 path: path.to_path_buf(),
-                graph_name: graph.name.clone(),
+                graph_name: graph
+                    .definition
+                    .as_ref()
+                    .map(|definition| definition.name.clone())
+                    .unwrap_or_default(),
                 reason: format!("{error:#}"),
             })?;
     }

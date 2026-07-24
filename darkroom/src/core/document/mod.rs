@@ -7,9 +7,8 @@ pub(crate) mod validate;
 use ::serde::{Deserialize, Serialize};
 use glam::Vec2;
 use indexmap::IndexMap;
-use scenarium::GraphId;
-use scenarium::GraphLink;
 use scenarium::{DetachedNode, Graph as CoreGraph, NodeId, NodeSearch, OutputPort};
+use scenarium::{GraphId, GraphLink, Library};
 use scenarium::{Node, NodeKind};
 use std::collections::{BTreeSet, HashMap};
 
@@ -223,6 +222,52 @@ impl GraphView {
         let to = target_index.min(self.item_placements.len() - 1);
         self.item_placements.move_index(from, to);
     }
+
+    fn apply_output_port_changes(&mut self, changes: &HashMap<OutputPort, Option<OutputPort>>) {
+        let mut placements = IndexMap::with_capacity(self.item_placements.len());
+        for (item, position) in std::mem::take(&mut self.item_placements) {
+            let Some(item) = remap_item(item, changes) else {
+                continue;
+            };
+            assert!(
+                placements.insert(item, position).is_none(),
+                "normalization cannot merge distinct view items"
+            );
+        }
+        self.item_placements = placements;
+        self.selected = std::mem::take(&mut self.selected)
+            .into_iter()
+            .filter_map(|item| remap_item(item, changes))
+            .collect();
+    }
+}
+
+fn remap_item(item: ItemRef, changes: &HashMap<OutputPort, Option<OutputPort>>) -> Option<ItemRef> {
+    match item {
+        ItemRef::Node(_) => Some(item),
+        ItemRef::Pin(port) => remap_output_port(port, changes).map(ItemRef::Pin),
+    }
+}
+
+fn remap_output_port(
+    port: OutputPort,
+    changes: &HashMap<OutputPort, Option<OutputPort>>,
+) -> Option<OutputPort> {
+    changes.get(&port).copied().unwrap_or(Some(port))
+}
+
+fn remap_port_ref(
+    port: PortRef,
+    changes: &HashMap<OutputPort, Option<OutputPort>>,
+) -> Option<PortRef> {
+    if port.kind != PortKind::Output {
+        return Some(port);
+    }
+    remap_output_port(OutputPort::new(port.node_id, port.port_idx), changes).map(|output| PortRef {
+        node_id: output.node_id,
+        kind: PortKind::Output,
+        port_idx: output.port_idx,
+    })
 }
 
 /// A graph plus its view metadata, borrowed together so an edit can
@@ -305,6 +350,26 @@ fn resolve_named_slot<T>(
 }
 
 impl Document {
+    pub(crate) fn normalize(&mut self, library: &Library) {
+        let report = self.graph.normalize(library);
+        if report.output_ports.is_empty() {
+            return;
+        }
+        let changes: HashMap<OutputPort, Option<OutputPort>> = report
+            .output_ports
+            .into_iter()
+            .map(|change| (change.from, change.to))
+            .collect();
+        self.main_view.apply_output_port_changes(&changes);
+        for view in self.local_views.values_mut() {
+            view.apply_output_port_changes(&changes);
+        }
+        self.layout.remap_tabs(|tab| match tab {
+            TabRef::ImageViewer(port) => remap_port_ref(port, &changes).map(TabRef::ImageViewer),
+            _ => Some(tab),
+        });
+    }
+
     /// The graph a target points at, or `None` if it no longer exists
     /// (e.g. a graph deleted while its tab was open).
     pub(crate) fn graph_for(&self, target: GraphRef) -> Option<&CoreGraph> {
@@ -488,8 +553,8 @@ impl Document {
     ) -> Option<&str> {
         let graph = self.graph.graphs.get(&graph_id)?;
         let name = match side {
-            BoundarySide::Input => &graph.inputs.get(idx)?.name,
-            BoundarySide::Output => &graph.outputs.get(idx)?.name,
+            BoundarySide::Input => &graph.definition().inputs.get(idx)?.name,
+            BoundarySide::Output => &graph.definition().outputs.get(idx)?.name,
         };
         Some(name)
     }
@@ -515,12 +580,14 @@ impl Document {
         };
         let slot = match side {
             BoundarySide::Input => {
-                resolve_named_slot(&graph.inputs, idx_hint, expected, |i| &i.name)
-                    .map(|i| &mut graph.inputs[i].name)
+                let inputs = &mut graph.definition_mut().inputs;
+                resolve_named_slot(inputs, idx_hint, expected, |input| &input.name)
+                    .map(|index| &mut inputs[index].name)
             }
             BoundarySide::Output => {
-                resolve_named_slot(&graph.outputs, idx_hint, expected, |o| &o.name)
-                    .map(|i| &mut graph.outputs[i].name)
+                let outputs = &mut graph.definition_mut().outputs;
+                resolve_named_slot(outputs, idx_hint, expected, |output| &output.name)
+                    .map(|index| &mut outputs[index].name)
             }
         };
         if let Some(slot) = slot {

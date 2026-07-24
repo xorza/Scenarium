@@ -16,6 +16,8 @@ pub enum GraphDeserializeError {
 
 #[derive(Debug, Error)]
 pub enum GraphValidationError {
+    #[error("graph referenced as a subgraph has no reusable definition")]
+    MissingGraphDefinition,
     #[error("graph has a nil origin")]
     NilOrigin,
     #[error("graph contains a node with a nil id")]

@@ -1,7 +1,8 @@
 use crate::data::static_value::StaticValue;
 use crate::data::type_system::DataType;
-use crate::graph::interface::{GraphId, GraphLink};
-use crate::graph::{Binding, Graph, InputPort, Node, NodeId, NodeKind};
+use crate::graph::interface::{GraphEvent, GraphId, GraphLink};
+use crate::graph::normalize::OutputPortChange;
+use crate::graph::{Binding, Graph, InputPort, Node, NodeId, NodeKind, OutputPort, Subscription};
 use crate::library::Library;
 use crate::node::definition::{Func, FuncId, FuncInput, FuncOutput};
 use crate::node::event::EventLambda;
@@ -196,6 +197,117 @@ fn middle_disconnect_compacts_interior_and_instance_bindings() {
 }
 
 #[test]
+fn interface_compaction_remaps_output_and_event_references() {
+    let event_func_id = FuncId::unique();
+    let mut library = lib();
+    library.add(testing::with_stub_lambda(
+        Func::new(event_func_id, "emitter").event("tick", EventLambda::default()),
+    ));
+
+    let mut fixture = build_graph(
+        &library,
+        vec![],
+        vec![
+            FuncOutput::new("A", DataType::Int),
+            FuncOutput::new("B", DataType::Int),
+            FuncOutput::new("C", DataType::Int),
+        ],
+    );
+    bind(&mut fixture.graph, fixture.output, 0, fixture.sum, 0);
+    bind(&mut fixture.graph, fixture.output, 2, fixture.sum, 0);
+    let emitter = fixture.graph.add(Node::new(NodeKind::Func(event_func_id)));
+    let missing_emitter = NodeId::unique();
+    fixture.graph.events = vec![
+        GraphEvent {
+            name: "dead".to_owned(),
+            emitter: missing_emitter,
+            emitter_event_idx: 0,
+        },
+        GraphEvent {
+            name: "live".to_owned(),
+            emitter,
+            emitter_event_idx: 0,
+        },
+    ];
+
+    let graph_id = GraphId::unique();
+    let mut graph = Graph::default();
+    graph.insert_graph(graph_id, fixture.graph.clone());
+    let instance = graph.add_graph_node(&fixture.graph, GraphLink::Local(graph_id));
+    let consumer = graph.add_func_node(library.by_name("sum").unwrap());
+    bind(&mut graph, consumer, 0, instance, 0);
+    bind(&mut graph, consumer, 1, instance, 2);
+    graph.set_output_pinned(OutputPort::new(instance, 1), true);
+    graph.set_output_pinned(OutputPort::new(instance, 2), true);
+    graph.subscribe(instance, 0, consumer);
+    graph.subscribe(instance, 1, consumer);
+    graph.events = vec![
+        GraphEvent {
+            name: "dead parent".to_owned(),
+            emitter: instance,
+            emitter_event_idx: 0,
+        },
+        GraphEvent {
+            name: "live parent".to_owned(),
+            emitter: instance,
+            emitter_event_idx: 1,
+        },
+    ];
+
+    let report = graph.normalize(&library);
+
+    assert_eq!(
+        report.output_ports,
+        [
+            OutputPortChange {
+                from: OutputPort::new(instance, 1),
+                to: None,
+            },
+            OutputPortChange {
+                from: OutputPort::new(instance, 2),
+                to: Some(OutputPort::new(instance, 1)),
+            },
+        ]
+    );
+    assert_eq!(
+        graph.bindings.get(&InputPort::new(consumer, 0)),
+        Some(&Binding::bind(instance, 0))
+    );
+    assert_eq!(
+        graph.bindings.get(&InputPort::new(consumer, 1)),
+        Some(&Binding::bind(instance, 1))
+    );
+    assert_eq!(
+        graph.pinned_outputs().collect::<Vec<_>>(),
+        [OutputPort::new(instance, 1)]
+    );
+    assert_eq!(
+        graph.subscriptions().collect::<Vec<_>>(),
+        [Subscription {
+            emitter: instance,
+            event_idx: 0,
+            subscriber: consumer,
+        }]
+    );
+    assert_eq!(
+        graph.events,
+        [GraphEvent {
+            name: "live parent".to_owned(),
+            emitter: instance,
+            emitter_event_idx: 0,
+        }]
+    );
+    assert_eq!(
+        graph.graphs[&graph_id].events,
+        [GraphEvent {
+            name: "live".to_owned(),
+            emitter,
+            emitter_event_idx: 0,
+        }]
+    );
+}
+
+#[test]
 fn nested_local_graphs_normalize_within_their_owning_scope() {
     let library = lib();
     let repeated_id = GraphId::unique();
@@ -295,13 +407,14 @@ fn unused_graph_input_shrinks_interface() {
 
 #[test]
 fn existing_port_type_is_rederived_from_wiring() {
-    // An existing slot authored with a stale type (Bool) but wired to
-    // `sum.in0` (Int): reconcile corrects the type to Int while keeping
-    // the authored name.
     let library = lib();
-    let stale = FuncInput::optional("A", DataType::Bool);
-    let mut fixture = build_graph(&library, vec![stale], vec![]);
+    let stale_input =
+        FuncInput::optional("A", DataType::Bool).description("authored input description");
+    let stale_output =
+        FuncOutput::new("Result", DataType::Bool).description("authored output description");
+    let mut fixture = build_graph(&library, vec![stale_input], vec![stale_output]);
     bind(&mut fixture.graph, fixture.sum, 0, fixture.input, 0);
+    bind(&mut fixture.graph, fixture.output, 0, fixture.sum, 0);
     let graph_id = GraphId::unique();
     let mut graph = Graph::default();
     graph.insert_graph(graph_id, fixture.graph);
@@ -309,11 +422,26 @@ fn existing_port_type_is_rederived_from_wiring() {
     graph.normalize(&library);
 
     let input = &graph.graphs.get(&graph_id).unwrap().inputs[0];
-    assert_eq!(input.name, "A", "authored name preserved");
+    assert_eq!(input.name, "A");
+    assert_eq!(
+        input.description.as_deref(),
+        Some("authored input description")
+    );
     assert_eq!(
         input.data_type,
         DataType::Int,
         "type re-derived from the wired func input, replacing the stale Bool"
+    );
+    let output = &graph.graphs.get(&graph_id).unwrap().outputs[0];
+    assert_eq!(output.name, "Result");
+    assert_eq!(
+        output.description.as_deref(),
+        Some("authored output description")
+    );
+    assert_eq!(
+        output.ty.declared(),
+        DataType::Int,
+        "type re-derived from the wired func output, replacing the stale Bool"
     );
 }
 
@@ -405,7 +533,7 @@ fn passthrough_in_graph_exposes_the_resolved_output_type() {
 }
 
 #[test]
-fn normalize_drops_out_of_range_and_missing_emitter_subscriptions() {
+fn normalize_drops_stale_event_references_and_preserves_unresolved_ones() {
     let func_id = FuncId::from_u128(0xe0e0);
     let mut library = Library::default();
     library.add(testing::with_stub_lambda(
@@ -416,23 +544,59 @@ fn normalize_drops_out_of_range_and_missing_emitter_subscriptions() {
     let emitter_id = graph.add(Node::new(NodeKind::Func(func_id)));
     let subscriber_id = graph.add(Node::new(NodeKind::Func(func_id)));
     let missing_emitter = NodeId::unique();
+    let missing_subscriber = NodeId::unique();
     graph.subscribe(emitter_id, 0, subscriber_id);
     graph.subscribe(emitter_id, 1, subscriber_id);
     graph.subscribe(missing_emitter, 0, subscriber_id);
+    graph.subscribe(emitter_id, 0, missing_subscriber);
+    graph.events = vec![
+        GraphEvent {
+            name: "valid".to_owned(),
+            emitter: emitter_id,
+            emitter_event_idx: 0,
+        },
+        GraphEvent {
+            name: "out of range".to_owned(),
+            emitter: emitter_id,
+            emitter_event_idx: 1,
+        },
+        GraphEvent {
+            name: "missing".to_owned(),
+            emitter: missing_emitter,
+            emitter_event_idx: 0,
+        },
+    ];
 
     graph.normalize(&library);
 
     assert!(graph.is_subscribed(emitter_id, 0, subscriber_id));
     assert!(!graph.is_subscribed(emitter_id, 1, subscriber_id));
     assert!(!graph.is_subscribed(missing_emitter, 0, subscriber_id));
+    assert!(!graph.is_subscribed(emitter_id, 0, missing_subscriber));
+    assert_eq!(
+        graph.events,
+        [GraphEvent {
+            name: "valid".to_owned(),
+            emitter: emitter_id,
+            emitter_event_idx: 0,
+        }]
+    );
 
     graph.normalize(&library);
     assert_eq!(graph.subscriptions().count(), 1);
 
     let unresolved_id = graph.add(Node::new(NodeKind::Func(FuncId::from_u128(0xdead))));
     graph.subscribe(unresolved_id, 4, subscriber_id);
+    graph.events.push(GraphEvent {
+        name: "unresolved".to_owned(),
+        emitter: unresolved_id,
+        emitter_event_idx: 4,
+    });
     graph.normalize(&library);
     assert!(graph.is_subscribed(unresolved_id, 4, subscriber_id));
+    assert_eq!(graph.events[1].name, "unresolved");
+    assert_eq!(graph.events[1].emitter, unresolved_id);
+    assert_eq!(graph.events[1].emitter_event_idx, 4);
 }
 
 #[test]
@@ -469,8 +633,11 @@ fn normalize_drops_out_of_range_and_missing_binding_endpoints() {
         InputPort::new(graph_output, 1),
         Binding::bind(graph_input, 0),
     );
+    graph.set_output_pinned(OutputPort::new(a, 0), true);
+    graph.set_output_pinned(OutputPort::new(c, 1), true);
+    graph.set_output_pinned(OutputPort::new(missing_node, 0), true);
 
-    graph.normalize(&library);
+    let report = graph.normalize(&library);
 
     assert_eq!(
         graph.bindings.get(&InputPort::new(b, 0)),
@@ -489,6 +656,18 @@ fn normalize_drops_out_of_range_and_missing_binding_endpoints() {
         graph.bindings.get(&InputPort::new(graph_output, 0)),
         Some(&Binding::bind(graph_input, 0)),
     );
+    assert!(graph.is_output_pinned(OutputPort::new(a, 0)));
+    assert!(!graph.is_output_pinned(OutputPort::new(c, 1)));
+    assert!(!graph.is_output_pinned(OutputPort::new(missing_node, 0)));
+    assert_eq!(report.output_ports.len(), 2);
+    assert!(report.output_ports.contains(&OutputPortChange {
+        from: OutputPort::new(c, 1),
+        to: None,
+    }));
+    assert!(report.output_ports.contains(&OutputPortChange {
+        from: OutputPort::new(missing_node, 0),
+        to: None,
+    }));
 
     graph.set_input_binding(
         InputPort::new(b, 0),
@@ -503,6 +682,7 @@ fn normalize_drops_out_of_range_and_missing_binding_endpoints() {
     let unresolved_id = graph.add(Node::new(NodeKind::Func(FuncId::from_u128(0xdead))));
     graph.set_input_binding(InputPort::new(unresolved_id, 3), Binding::bind(a, 0));
     graph.set_input_binding(InputPort::new(b, 0), Binding::bind(unresolved_id, 7));
+    graph.set_output_pinned(OutputPort::new(unresolved_id, 7), true);
     graph.normalize(&library);
     assert_eq!(
         graph.bindings.get(&InputPort::new(unresolved_id, 3)),
@@ -512,4 +692,5 @@ fn normalize_drops_out_of_range_and_missing_binding_endpoints() {
         graph.bindings.get(&InputPort::new(b, 0)),
         Some(&Binding::bind(unresolved_id, 7)),
     );
+    assert!(graph.is_output_pinned(OutputPort::new(unresolved_id, 7)));
 }

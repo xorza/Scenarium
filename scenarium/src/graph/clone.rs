@@ -3,7 +3,9 @@ use std::collections::HashMap;
 use hashbrown::HashMap as NodeMap;
 
 use crate::graph::interface::GraphEvent;
-use crate::graph::{Binding, Graph, InputPort, NodeId, OutputPort, Subscription};
+use crate::graph::{
+    Binding, Graph, GraphDefinition, InputPort, NodeId, OutputPort, Subscription,
+};
 
 impl Graph {
     /// Copy this graph with fresh node identities throughout its local graph
@@ -43,26 +45,25 @@ impl Graph {
             .iter()
             .map(|port| OutputPort::new(remap(port.node_id), port.port_idx))
             .collect();
-        let events = self
-            .events
-            .iter()
-            .map(|event| GraphEvent {
-                emitter: remap(event.emitter),
-                ..event.clone()
-            })
-            .collect();
+        let definition = self.definition.as_ref().map(|definition| GraphDefinition {
+            events: definition
+                .events
+                .iter()
+                .map(|event| GraphEvent {
+                    emitter: remap(event.emitter),
+                    ..event.clone()
+                })
+                .collect(),
+            origin: None,
+            ..definition.clone()
+        });
         let graphs = self
             .graphs
             .iter()
             .map(|(graph_id, graph)| (*graph_id, graph.fresh_copy()))
             .collect();
         Graph {
-            name: self.name.clone(),
-            category: self.category.clone(),
-            inputs: self.inputs.clone(),
-            outputs: self.outputs.clone(),
-            events,
-            origin: None,
+            definition,
             nodes,
             bindings,
             subscriptions,

@@ -31,10 +31,11 @@ pub use execution::outcome::{LogEntry, LogLevel};
 pub use execution::report::{PinnedOutput, PinnedOutputs};
 pub use execution::seeds::RunSeeds;
 pub use graph::interface::{GraphEvent, GraphId, GraphLink};
-pub use graph::wiring::{BindingEntry, DetachedNode, closes_data_cycle};
+pub use graph::normalize::{NormalizationReport, OutputPortChange};
+pub use graph::wiring::{BindingEntry, DetachedGraphEvent, DetachedNode, closes_data_cycle};
 pub use graph::{
-    Binding, CacheMode, Graph, InputPort, Node, NodeId, NodeKind, NodeRef, NodeSearch, OutputPort,
-    Subscription,
+    Binding, CacheMode, Graph, GraphDefinition, InputPort, Node, NodeId, NodeKind, NodeRef,
+    NodeSearch, OutputPort, Subscription,
 };
 pub use library::{Library, TypeEntry};
 pub use node::definition::{

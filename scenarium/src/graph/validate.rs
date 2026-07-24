@@ -31,8 +31,16 @@ impl<'a> GraphChecker<'a> {
         }
     }
 
-    fn validate_graph(&mut self, graph: &Graph) -> ValidationResult<()> {
-        if graph.origin.is_some_and(|origin| origin.is_nil()) {
+    fn validate_graph(&mut self, graph: &Graph, requires_definition: bool) -> ValidationResult<()> {
+        if requires_definition && graph.definition.is_none() {
+            return Err(GraphValidationError::MissingGraphDefinition);
+        }
+        if graph
+            .definition
+            .as_ref()
+            .and_then(|definition| definition.origin)
+            .is_some_and(|origin| origin.is_nil())
+        {
             return Err(GraphValidationError::NilOrigin);
         }
         let mut boundary_inputs = 0usize;
@@ -204,22 +212,24 @@ impl<'a> GraphChecker<'a> {
             }
         }
 
-        for event in &graph.events {
-            let emitter = graph.nodes.get(&event.emitter).ok_or_else(|| {
-                GraphValidationError::ExposedEventMissingEmitter {
-                    name: event.name.clone(),
-                    emitter: event.emitter,
-                }
-            })?;
-            if let Some(library) = self.library {
-                let event_count = graph
-                    .event_count(emitter, library)
-                    .expect("node reference resolved before exposed-event validation");
-                if event.emitter_event_idx >= event_count {
-                    return Err(GraphValidationError::ExposedEventOutOfRange {
+        if let Some(definition) = &graph.definition {
+            for event in &definition.events {
+                let emitter = graph.nodes.get(&event.emitter).ok_or_else(|| {
+                    GraphValidationError::ExposedEventMissingEmitter {
+                        name: event.name.clone(),
                         emitter: event.emitter,
-                        event_idx: event.emitter_event_idx,
-                    });
+                    }
+                })?;
+                if let Some(library) = self.library {
+                    let event_count = graph
+                        .event_count(emitter, library)
+                        .expect("node reference resolved before exposed-event validation");
+                    if event.emitter_event_idx >= event_count {
+                        return Err(GraphValidationError::ExposedEventOutOfRange {
+                            emitter: event.emitter,
+                            event_idx: event.emitter_event_idx,
+                        });
+                    }
                 }
             }
         }
@@ -228,9 +238,14 @@ impl<'a> GraphChecker<'a> {
             if graph_id.is_nil() {
                 return Err(GraphValidationError::NilLocalGraphId);
             }
-            self.validate_graph(nested)
+            let name = nested
+                .definition
+                .as_ref()
+                .map(|definition| definition.name.clone())
+                .unwrap_or_default();
+            self.validate_graph(nested, true)
                 .map_err(|source| GraphValidationError::LocalGraph {
-                    name: nested.name.clone(),
+                    name,
                     source: Box::new(source),
                 })?;
         }
@@ -244,15 +259,24 @@ impl<'a> GraphChecker<'a> {
         }
         if !self.shared_path.insert(graph_id) {
             return Err(GraphValidationError::RecursiveGraph {
-                name: graph.name.clone(),
+                name: graph
+                    .definition
+                    .as_ref()
+                    .map(|definition| definition.name.clone())
+                    .unwrap_or_default(),
             });
         }
-        let result =
-            self.validate_graph(graph)
-                .map_err(|source| GraphValidationError::SharedGraph {
-                    name: graph.name.clone(),
-                    source: Box::new(source),
-                });
+        let name = graph
+            .definition
+            .as_ref()
+            .map(|definition| definition.name.clone())
+            .unwrap_or_default();
+        let result = self.validate_graph(graph, true).map_err(|source| {
+            GraphValidationError::SharedGraph {
+                name,
+                source: Box::new(source),
+            }
+        });
         self.shared_path.remove(&graph_id);
         result?;
         self.checked_shared.insert(graph_id);
@@ -261,9 +285,14 @@ impl<'a> GraphChecker<'a> {
 }
 
 impl Graph {
-    /// Validate this reusable graph and its complete local graph tree.
+    /// Validate this graph's structure and complete local graph tree.
     pub fn validate(&self) -> ValidationResult<()> {
-        GraphChecker::new(None).validate_graph(self)
+        GraphChecker::new(None).validate_graph(self, false)
+    }
+
+    /// Validate a reusable graph definition and its complete local graph tree.
+    pub fn validate_subgraph(&self) -> ValidationResult<()> {
+        GraphChecker::new(None).validate_graph(self, true)
     }
 
     /// Debug-only assert form of [`Self::validate`].
@@ -278,13 +307,13 @@ impl Graph {
     /// Validate an execution entry and every local or reachable shared graph
     /// against `library`.
     pub fn validate_for_execution(&self, library: &Library) -> ValidationResult<()> {
-        if !self.inputs.is_empty() || !self.outputs.is_empty() || !self.events.is_empty() {
+        if self.definition.is_some() {
             return Err(GraphValidationError::EntryInterface);
         }
         if self.nodes.values().any(|node| node.kind.is_boundary()) {
             return Err(GraphValidationError::EntryBoundaryNodes);
         }
-        GraphChecker::new(Some(library)).validate_graph(self)
+        GraphChecker::new(Some(library)).validate_graph(self, false)
     }
 
     /// Debug-only assert form of [`Self::validate_for_execution`].
